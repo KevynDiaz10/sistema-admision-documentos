@@ -1,7 +1,5 @@
 "use client";
-import "./../../style/globals.css";
-import "./../../style/website/requirements-section.css";
-
+import "../../../style/website/requirements_section.css";
 const dataRequirements = [
   { req: "titulo de bachiller" },
   { req: "titulo de bachiller fonde negro" },

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
@@ -36,20 +36,21 @@ export async function POST(request: Request) {
         },
         {
           status: 400,
-        }
+        },
       );
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const newUser = await prisma.user.create({
-      data: {
-        email: data.email,
-        password: hashedPassword,
-      },
-    });
+    const newUser = await prisma.user
+      .create({
+        data: {
+          id: crypto.randomUUID(),
+          email: data.email,
+          password: hashedPassword,
+        },
+      })
 
     const { password: _, ...user } = newUser;
-
     return NextResponse.json(user);
   } catch (error) {
     return NextResponse.json(
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

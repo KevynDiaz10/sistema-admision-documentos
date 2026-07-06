@@ -16,7 +16,7 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body className={`bg-[#D6D6E6] ${interFont.className}`}>
           <Providers>{children}</Providers>
           <Toaster />

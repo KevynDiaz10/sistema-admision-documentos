@@ -45,7 +45,52 @@ model user {
   name          String?
   account       account[]
   session       session[]
+
+  documentos    documentos[]
 }
+
+enum TipoDocumento {
+  foto_carnet
+  cedula
+  titulo
+  fondo_negro
+  notas_certificadas
+}
+
+enum Extension {
+  pdf
+  png
+  jpg
+  jpeg
+  doc
+  docx
+}
+
+enum EstadoDocumento {
+  sin_consignar
+  entregado
+  aprobado
+  rechazado
+}
+
+model documentos {
+  id              Int             @id @default(autoincrement())
+  usuario_id      String          // <--- Cambiado a String para emparejar con user.id
+  tipo_documento   TipoDocumento
+  estado          EstadoDocumento @default(sin_consignar) // <--- Estado por defecto nativo
+  ruta_archivo    String?         @db.VarChar(500)       // <--- Opcional (?) al iniciar
+  extension       Extension?                             // <--- Opcional (?) al iniciar
+  peso_bytes      Int?
+  nombre_original String?         @db.VarChar(200)
+  fecha_subida    DateTime        @default(now()) @db.Timestamp()
+
+  // Relación directa
+  usuario         user            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+
+  @@unique([usuario_id, tipo_documento], name: "unique_usuario_tipo")
+}
+
+
 
 model verificationtoken {
   identifier String

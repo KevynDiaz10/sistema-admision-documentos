@@ -9,33 +9,13 @@ import { useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Document } from "./components/documents";
 import { useEffect, useState } from "react";
-import { getDocuments } from "../services/auth/users";
 
 export default function Page() {
   const { data: session } = useSession();
   const [documentos, setDocumentos] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // 1. Creamos la función asíncrona interna
-    const fetchDocuments = async () => {
-      try {
-        const res = await getDocuments(session?.user?.email as string); 
-        console.log("Datos recibidos:", res);
-        if (res.success) {
-          console.log("Documentos encontrados:", res.data);
-          setDocumentos(res.data);
-        }
-        
-        setLoading(true)
-      } catch (error) {
-        console.error("Error al traer documentos:", error);
-      }
-    };
-
-    // 2. La ejecutamos inmediatamente
-    fetchDocuments();
-  }, []);
+ 
   return (
     <SidebarProvider>
       <AppSidebar />

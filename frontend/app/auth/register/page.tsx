@@ -2,8 +2,6 @@
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import "./../../../public/hero-img-2.png";
-import { prisma } from "@/lib/prisma";
-import { createDocuments } from "@/app/services/auth/users";
 function RegisterPage() {
   const {
     register,
@@ -27,12 +25,8 @@ function RegisterPage() {
         "Content-Type": "application/json",
       },
     });
-
     if (res.ok) {
-      res.json().then(async (data) => {
-        await createDocuments(data);
-      });
-      router.push("/auth/login");
+      router.push("/auth/complete-profile");
     }
   });
 

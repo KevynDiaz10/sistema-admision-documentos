@@ -7,95 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model account {
-  id                String  @id
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
-
-  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
-  @@index([userId], map: "Account_userId_fkey")
-}
-
-model session {
-  id           String   @id
-  sessionToken String   @unique(map: "Session_sessionToken_key")
-  userId       String
-  expires      DateTime
-  user         user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Session_userId_fkey")
-
-  @@index([userId], map: "Session_userId_fkey")
-}
-
 model user {
-  id            String    @id
-  email         String    @unique(map: "User_email_key")
+  id            String     @id
+  email         String     @unique(map: "User_email_key")
   password      String
   emailVerified DateTime?
   image         String?
   name          String?
-  account       account[]
-  session       session[]
-
-  documentos    documentos[]
+  perfiles      perfil[]
 }
 
-enum TipoDocumento {
-  foto_carnet
-  cedula
-  titulo
-  fondo_negro
-  notas_certificadas
+model perfil_documentos {
+  id             Int       @id @default(autoincrement())
+  perfil_id      Int
+  tipo           String    @db.VarChar(40)
+  nombre_archivo String    @db.VarChar(255)
+  mime_type      String    @db.VarChar(120)
+  tamano         Int
+  contenido      Bytes
+  creado_en      DateTime? @default(now()) @db.Timestamp(0)
+  perfil         perfil    @relation(fields: [perfil_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_perfil")
+
+  @@index([perfil_id], map: "fk_perfil")
 }
 
-enum Extension {
-  pdf
-  png
-  jpg
-  jpeg
-  doc
-  docx
-}
+model perfil {
+  id                Int                 @id @default(autoincrement())
+  nombres           String              @db.VarChar(120)
+  apellidos         String              @db.VarChar(120)
+  cedula            String              @db.VarChar(40)
+  correo            String              @db.VarChar(160)
+  telefono          String              @db.VarChar(40)
+  fecha_nacimiento  String?             @db.VarChar(20)
+  genero            String?             @db.VarChar(40)
+  direccion         String              @db.VarChar(255)
+  carrera           String              @db.VarChar(160)
+  semestre          String?             @db.VarChar(10)
+  creado_en         DateTime?           @default(now()) @db.Timestamp(0)
+  id_user           String
+  perfil_documentos perfil_documentos[]
+  user              user                @relation(fields: [id_user], references: [id], onDelete: Cascade, map: "FK_perfiles_user")
 
-enum EstadoDocumento {
-  sin_consignar
-  entregado
-  aprobado
-  rechazado
-}
-
-model documentos {
-  id              Int             @id @default(autoincrement())
-  usuario_id      String          // <--- Cambiado a String para emparejar con user.id
-  tipo_documento   TipoDocumento
-  estado          EstadoDocumento @default(sin_consignar) // <--- Estado por defecto nativo
-  ruta_archivo    String?         @db.VarChar(500)       // <--- Opcional (?) al iniciar
-  extension       Extension?                             // <--- Opcional (?) al iniciar
-  peso_bytes      Int?
-  nombre_original String?         @db.VarChar(200)
-  fecha_subida    DateTime        @default(now()) @db.Timestamp()
-
-  // Relación directa
-  usuario         user            @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
-
-  @@unique([usuario_id, tipo_documento], name: "unique_usuario_tipo")
-}
-
-
-
-model verificationtoken {
-  identifier String
-  token      String   @unique(map: "VerificationToken_token_key")
-  expires    DateTime
-
-  @@unique([identifier, token], map: "VerificationToken_identifier_token_key")
+  @@index([id_user], map: "FK_perfiles_user")
+  @@map("perfiles")
 }

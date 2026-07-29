@@ -2,7 +2,7 @@
 
 import { FileUploadField, type UploadFile } from "./file-upload-field"
 
-export type DocumentId = "fondoNegro" | "cedula" | "notas" | "fotoCarnet" | "titulo"
+export type DocumentId = "fondoNegro" | "cedulaFile" | "notas" | "fotoCarnet" | "titulo"
 
 export type DocumentsState = Partial<Record<DocumentId, UploadFile>>
 
@@ -21,7 +21,7 @@ export const DOCUMENT_FIELDS: {
     acceptLabel: "PDF",
   },
   {
-    id: "cedula",
+    id: "cedulaFile",
     label: "Cédula",
     description: "Copia de tu cédula de identidad.",
     accept: ".png,.pdf",

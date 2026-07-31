@@ -1,8 +1,9 @@
-import { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "@/lib/prisma"
-import bcrypt from "bcrypt"
+// lib/auth.ts
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -15,24 +16,24 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Credenciales inválidas")
+          throw new Error("Credenciales inválidas");
         }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
-        })
+        });
 
         if (!user || !user.password) {
-          throw new Error("Usuario no encontrado")
+          throw new Error("Usuario no encontrado");
         }
 
         const passwordMatch = await bcrypt.compare(
           credentials.password,
           user.password
-        )
+        );
 
         if (!passwordMatch) {
-          throw new Error("Contraseña incorrecta")
+          throw new Error("Contraseña incorrecta");
         }
 
         return {
@@ -40,29 +41,34 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           image: user.image,
-        }
+          role: user.role || "user",
+        };
       }
     })
   ],
   session: {
-    strategy: "jwt", // Usando JWT en lugar de base de datos. jwt para evitar crear en la db seccion y account para cada usuario
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
-      // Cuando el usuario inicia sesión, agregamos su ID al token
       if (user) {
-        token.id = user.id
-        token.email = user.email
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.role = user.role || "user";
+        token.picture = user.image;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      // Pasamos los datos del token a la sesión
       if (session.user) {
-        session.user.name = token.id as string
-        session.user.email = token.email as string
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.role = token.role as string || "user";
+        session.user.image = token.picture as string;
       }
-      return session
+      return session;
     }
   },
   pages: {
@@ -71,4 +77,4 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
-}
+};

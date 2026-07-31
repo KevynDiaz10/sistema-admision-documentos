@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
  */
 function HeroSection() {
   return (
-    <section className="flex gap-30 p-10 bg-linear-to-r from-blue-800 via-blue-900 to-blue-950">
+    <section className="flex gap-30 p-10 bg-linear-to-r from-blue-800 via-blue-900 to-blue-950 h-[90vh]">
       <div className="basis-1/2 flex flex-col justify-center gap-8 text-white">
         <h2 className={`font-mono text-5xl font-extrabold`}>
           Simplifica tu proceso de admisión

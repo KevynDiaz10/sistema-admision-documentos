@@ -101,16 +101,6 @@ export function ProfileWizard() {
               Ir al dashboard
             </Link>
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSubmitted(false)
-              setSubmitError(null)
-              setCurrent(0)
-            }}
-          >
-            Editar información
-          </Button>
         </div>
       </div>
     )

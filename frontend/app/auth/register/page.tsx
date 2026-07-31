@@ -26,7 +26,7 @@ function RegisterPage() {
       },
     });
     if (res.ok) {
-      router.push("/auth/complete-profile");
+       router.push(`/auth/complete-profile?email=${encodeURIComponent(data.email)}`);
     }
   });
 
@@ -113,23 +113,6 @@ function RegisterPage() {
               {errors.confirmPassword.message as string}
             </span>
           )}
-          <div className="flex items-center mb-4 mt-2">
-            <input
-              type="checkbox"
-              value=""
-              className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
-            />
-            <label
-              htmlFor="link-checkbox"
-              className="select-none ms-2 text-sm font-medium text-heading"
-            >
-              I agree with the{" "}
-              <a href="#" className="text-fg-brand hover:underline">
-                terms and conditions
-              </a>
-              .
-            </label>
-          </div>
           <button className="w-full bg-blue-500 text-white p-3 rounded-lg mt-2">
             Register
           </button>

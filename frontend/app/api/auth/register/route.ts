@@ -23,23 +23,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const usernameFound = await prisma.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
-
-    if (usernameFound) {
-      return NextResponse.json(
-        {
-          message: "username already exists",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = await prisma.user
       .create({

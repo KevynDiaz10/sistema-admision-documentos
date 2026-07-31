@@ -1,9 +1,10 @@
+// app/auth/login/page.tsx
 "use client";
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import "./../../../public/login-image.jpg";
+
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -28,7 +29,16 @@ export default function LoginPage() {
       if (result?.error) {
         setError(result.error);
       } else {
-        router.push("/dashboard");
+        // Obtener la sesión para verificar el rol
+        const response = await fetch("/api/auth/session");
+        const session = await response.json();
+        
+        // Redirigir según el rol
+        if (session?.user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
         router.refresh();
       }
     } catch (error) {
@@ -49,7 +59,7 @@ export default function LoginPage() {
       </div>
       <div>
         <div className="mx-auto w-full max-w-xl p-8 bg-white rounded-lg shadow">
-          <h1 className="text-2xl font-bold ">Iniciar Sesión</h1>
+          <h1 className="text-2xl font-bold">Iniciar Sesión</h1>
           <p className="text-gray-600 mb-6 text-xs">
             Inicia sesión para acceder a tu cuenta.
           </p>

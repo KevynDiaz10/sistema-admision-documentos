@@ -10,6 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { useSession } from "next-auth/react"
+import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 
 export type PersonalData = {
   nombres: string
@@ -69,11 +72,25 @@ function Field({
 }
 
 export function PersonalDataStep({ data, errors, onChange }: PersonalDataStepProps) {
+  const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  
+  // Obtener el email de la URL o de la sesión
+  const emailFromUrl = searchParams.get("email")
+  const userEmail = session?.user?.email || emailFromUrl
+
   function set<K extends keyof PersonalData>(key: K, value: string) {
     onChange({ ...data, [key]: value })
   }
-
+  
   const inputError = (key: keyof PersonalData) => (errors[key] ? "border-destructive" : "")
+
+  // Establecer el correo automáticamente cuando esté disponible
+  useEffect(() => {
+    if (userEmail && data.correo !== userEmail) {
+      set("correo", userEmail)
+    }
+  }, [userEmail])
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
@@ -111,11 +128,33 @@ export function PersonalDataStep({ data, errors, onChange }: PersonalDataStepPro
         <Input
           id="correo"
           type="email"
-          value={data.correo}
-          onChange={(e) => set("correo", e.target.value)}
+          value={data.correo || "Cargando..."}
+          readOnly
+          disabled
           placeholder="tucorreo@ejemplo.com"
-          className={cn(inputError("correo"))}
+          className={cn(
+            inputError("correo"),
+            "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-75"
+          )}
         />
+        <div className="flex items-center gap-1.5 mt-1">
+          <svg 
+            className="w-3.5 h-3.5 text-muted-foreground" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" 
+            />
+          </svg>
+          <p className="text-xs text-muted-foreground font-medium">
+            Este es el correo con el que te registraste y no se puede modificar
+          </p>
+        </div>
       </Field>
 
       <Field id="telefono" label="Teléfono" error={errors.telefono} required>

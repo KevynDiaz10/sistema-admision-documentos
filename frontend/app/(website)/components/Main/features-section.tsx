@@ -30,9 +30,9 @@ const dataFeatureItem = [
   },
   {
     badge: {text: "ALERTAS", color: "bg-red-500/20 text-red-500", icon: {name: "bell", color: "text-red-500"}},
-    title: "Notificaciones automáticas",
+    title: "Comentarios",
     descrition:
-      "Mantén a todos informados con alertas automáticas por Email sobre vencimientos o actualizaciones de expediente.",
+      "Mantén a todos informados con alertas por comentario sobre vencimientos o actualizaciones de expedientes, asegurando que nadie se quede atrás en el proceso de admisión.",
   },
   {
     badge: {text: "NUBE", color: "bg-purple-500/20 text-purple-500", icon: {name: "cloud", color: "text-purple-500"}},

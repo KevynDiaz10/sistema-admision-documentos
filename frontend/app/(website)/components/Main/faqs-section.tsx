@@ -33,7 +33,7 @@ const dataFaqs = [
   {
     pregunta: "¿Mis datos y documentos están seguros?",
     respuesta:
-      "Sí, utilizamos cifrado y protocolos de seguridad para proteger tu información, cumpliendo con estándares de privacidad institucional.",
+      "Sí, utilizamos cifrado y protocolos de seguridad para proteger tu información, cumpliendo con estándares de privacidad.",
   },
   {
     pregunta: "¿Cuánto tiempo toma completar la inscripción?",
@@ -44,7 +44,7 @@ const dataFaqs = [
   {
     pregunta: "¿Qué sucede después de completar todos los requisitos?",
     respuesta:
-      "Una vez aprobados todos tus documentos, podrás descargar tu comprobante y continuar con el proceso de matrícula desde el mismo portal.",
+      "Una vez aprobados todos tus documentos, puedes esperar la aprobación de los administradores.",
     className: "border-none",
   },
 ];

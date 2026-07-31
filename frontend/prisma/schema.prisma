@@ -8,12 +8,13 @@ datasource db {
 }
 
 model user {
-  id            String     @id
-  email         String     @unique(map: "User_email_key")
+  id            String    @id
+  email         String    @unique(map: "User_email_key")
   password      String
   emailVerified DateTime?
   image         String?
   name          String?
+  role          String?   @db.VarChar(50)
   perfiles      perfil[]
 }
 
@@ -44,10 +45,30 @@ model perfil {
   carrera           String              @db.VarChar(160)
   semestre          String?             @db.VarChar(10)
   creado_en         DateTime?           @default(now()) @db.Timestamp(0)
-  id_user           String
+  id_user           String?
   perfil_documentos perfil_documentos[]
-  user              user                @relation(fields: [id_user], references: [id], onDelete: Cascade, map: "FK_perfiles_user")
+  user              user?               @relation(fields: [id_user], references: [id], onDelete: Cascade, map: "FK_perfiles_user")
+  solicitudes       solicitudes[]
 
   @@index([id_user], map: "FK_perfiles_user")
   @@map("perfiles")
+}
+
+model solicitudes {
+  id                  Int                  @id @default(autoincrement())
+  id_perfil           Int?
+  carrera             String?              @db.VarChar(50)
+  comentarios         String?              @db.Text
+  estatus             solicitudes_estatus? @default(pendiente)
+  fecha_actualizacion DateTime?            @default(now()) @db.Timestamp(0)
+  fecha_creacion      DateTime?            @default(now()) @db.Timestamp(0)
+  perfiles            perfil?              @relation(fields: [id_perfil], references: [id], onDelete: Cascade, map: "solicitudes_ibfk_1")
+
+  @@index([id_perfil], map: "id_perfil")
+}
+
+enum solicitudes_estatus {
+  aprobado
+  rechazado
+  pendiente
 }

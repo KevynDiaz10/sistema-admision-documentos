@@ -46,7 +46,7 @@ import { Toaster } from "@/components/ui/sonner";
 // ============================================================
 // TIPOS
 // ============================================================
-type Estatus = 'pendiente' | 'aprobado' | 'rechazado';
+type Estatus = "pendiente" | "aprobado" | "rechazado";
 
 interface DocumentoEstudiante {
   id: number;
@@ -84,29 +84,32 @@ interface SolicitudData {
 // ============================================================
 // CONFIGURACIÓN
 // ============================================================
-const statusConfig: Record<Estatus, {
-  label: string;
-  className: string;
-  icon: typeof Clock;
-  bgCard: string;
-}> = {
+const statusConfig: Record<
+  Estatus,
+  {
+    label: string;
+    className: string;
+    icon: typeof Clock;
+    bgCard: string;
+  }
+> = {
   pendiente: {
-    label: 'Pendiente',
-    className: 'border-amber-500/30 text-amber-400 bg-amber-500/20',
+    label: "Pendiente",
+    className: "border-amber-500/30 text-amber-400 bg-amber-500/20",
     icon: Clock,
-    bgCard: 'bg-amber-500/10 border-amber-500/20',
+    bgCard: "bg-amber-500/10 border-amber-500/20",
   },
   aprobado: {
-    label: 'Aprobado',
-    className: 'border-emerald-500/30 text-emerald-400 bg-emerald-500/20',
+    label: "Aprobado",
+    className: "border-emerald-500/30 text-emerald-400 bg-emerald-500/20",
     icon: CheckCircle2,
-    bgCard: 'bg-emerald-500/10 border-emerald-500/20',
+    bgCard: "bg-emerald-500/10 border-emerald-500/20",
   },
   rechazado: {
-    label: 'Rechazado',
-    className: 'border-red-500/30 text-red-400 bg-red-500/20',
+    label: "Rechazado",
+    className: "border-red-500/30 text-red-400 bg-red-500/20",
     icon: XCircle,
-    bgCard: 'bg-red-500/10 border-red-500/20',
+    bgCard: "bg-red-500/10 border-red-500/20",
   },
 };
 
@@ -116,6 +119,8 @@ const tipoDocumentoLabels: Record<string, string> = {
   notas: "Notas Certificadas",
   fotoCarnet: "Foto Carnet",
   titulo: "Título de Bachiller",
+  partidaNacimiento: "Partida de nacimiento",
+  opsu: "Opsu",
 };
 
 const generoLabels: Record<string, string> = {
@@ -134,40 +139,43 @@ interface PageParams {
 export default function SolicitudPage({ params }: PageParams) {
   const { id } = use(params);
   const router = useRouter();
-  
+
   const [solicitud, setSolicitud] = useState<SolicitudData | null>(null);
   const [loading, setLoading] = useState(true);
   const [commentDraft, setCommentDraft] = useState("");
   const [confirm, setConfirm] = useState<{ status: Estatus } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [documentoPreview, setDocumentoPreview] = useState<DocumentoEstudiante | null>(null);
+  const [documentoPreview, setDocumentoPreview] =
+    useState<DocumentoEstudiante | null>(null);
 
   useEffect(() => {
     const fetchSolicitud = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/auth/admin/solicitudes?perfilId=${id}`);
-        
-        if (!response.ok) throw new Error('Error al cargar los datos');
-        
+        const response = await fetch(
+          `/api/auth/admin/solicitudes?perfilId=${id}`,
+        );
+
+        if (!response.ok) throw new Error("Error al cargar los datos");
+
         const data = await response.json();
-        
+
         let solicitudData = null;
         if (Array.isArray(data) && data.length > 0) {
           solicitudData = data[0];
         } else if (!Array.isArray(data) && data) {
           solicitudData = data;
         } else {
-          throw new Error('No se encontró la solicitud');
+          throw new Error("No se encontró la solicitud");
         }
-        
+
         setSolicitud(solicitudData);
         if (solicitudData.comentarios) {
           setCommentDraft(solicitudData.comentarios);
         }
       } catch (error) {
-        console.error('Error:', error);
-        toast.error('No se encontró la solicitud');
+        console.error("Error:", error);
+        toast.error("No se encontró la solicitud");
         setSolicitud(null);
       } finally {
         setLoading(false);
@@ -186,29 +194,31 @@ export default function SolicitudPage({ params }: PageParams) {
 
   const handleDownloadDocument = async (documento: DocumentoEstudiante) => {
     try {
-      const response = await fetch(`/api/auth/admin/documentos/${documento.id}`);
-      
-      if (!response.ok) throw new Error('Error al descargar el documento');
-      
+      const response = await fetch(
+        `/api/auth/admin/documentos/${documento.id}`,
+      );
+
+      if (!response.ok) throw new Error("Error al descargar el documento");
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = documento.nombre_archivo;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast.success("Documento descargado correctamente");
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       toast.error("Error al descargar el documento");
     }
   };
 
   const getDocumentIcon = (mimeType: string) => {
-    if (mimeType.startsWith('image/')) return ImageIcon;
+    if (mimeType.startsWith("image/")) return ImageIcon;
     return FileText;
   };
 
@@ -223,46 +233,57 @@ export default function SolicitudPage({ params }: PageParams) {
   // ============================================================
   const updateStatus = async (status: Estatus) => {
     if (isSubmitting) return;
-    
+
     try {
       setIsSubmitting(true);
-      
-      const response = await fetch(`/api/auth/admin/solicitudes?id=${solicitud!.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estatus: status,
-          comentarios: commentDraft.trim() || undefined,
-        }),
-      });
+
+      const response = await fetch(
+        `/api/auth/admin/solicitudes?id=${solicitud!.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            estatus: status,
+            comentarios: commentDraft.trim() || undefined,
+          }),
+        },
+      );
 
       const text = await response.text();
-      if (!text) throw new Error('Respuesta vacía del servidor');
+      if (!text) throw new Error("Respuesta vacía del servidor");
 
       const result = JSON.parse(text);
 
-      if (!response.ok) throw new Error(result.error || 'Error al actualizar la solicitud');
+      if (!response.ok)
+        throw new Error(result.error || "Error al actualizar la solicitud");
 
       if (result.data) {
         setSolicitud((prev) => ({
           ...result.data,
           perfiles: {
             ...result.data.perfiles,
-            perfil_documentos: prev?.perfiles.perfil_documentos || result.data.perfiles?.perfil_documentos || []
-          }
+            perfil_documentos:
+              prev?.perfiles.perfil_documentos ||
+              result.data.perfiles?.perfil_documentos ||
+              [],
+          },
         }));
       }
-      
+
       setConfirm(null);
-      
+
       toast.success(`Solicitud ${statusConfig[status].label.toLowerCase()}`, {
         description: `La solicitud #${solicitud!.id} ha sido ${statusConfig[status].label.toLowerCase()}`,
       });
-      
+
       setTimeout(() => router.push("/admin"), 600);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al actualizar la solicitud');
+      console.error("Error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error al actualizar la solicitud",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -270,62 +291,73 @@ export default function SolicitudPage({ params }: PageParams) {
 
   const saveCommentOnly = async () => {
     if (!commentDraft.trim() || isSubmitting) return;
-    
+
     try {
       setIsSubmitting(true);
-      
-      const response = await fetch(`/api/auth/admin/solicitudes?id=${solicitud!.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estatus: solicitud!.estatus,
-          comentarios: commentDraft.trim(),
-        }),
-      });
+
+      const response = await fetch(
+        `/api/auth/admin/solicitudes?id=${solicitud!.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            estatus: solicitud!.estatus,
+            comentarios: commentDraft.trim(),
+          }),
+        },
+      );
 
       const text = await response.text();
-      if (!text) throw new Error('Respuesta vacía del servidor');
+      if (!text) throw new Error("Respuesta vacía del servidor");
 
       const result = JSON.parse(text);
 
-      if (!response.ok) throw new Error(result.error || 'Error al guardar el comentario');
+      if (!response.ok)
+        throw new Error(result.error || "Error al guardar el comentario");
 
       if (result.data) {
         setSolicitud((prev) => ({
           ...result.data,
           perfiles: {
             ...result.data.perfiles,
-            perfil_documentos: prev?.perfiles.perfil_documentos || result.data.perfiles?.perfil_documentos || []
-          }
+            perfil_documentos:
+              prev?.perfiles.perfil_documentos ||
+              result.data.perfiles?.perfil_documentos ||
+              [],
+          },
         }));
       }
-      
+
       toast.success("Comentario guardado");
     } catch (error) {
-      console.error('Error:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al guardar el comentario');
+      console.error("Error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error al guardar el comentario",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const formatDate = (date: string | null) => {
-    if (!date) return 'No disponible';
-    return new Date(date).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    if (!date) return "No disponible";
+    return new Date(date).toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const formatBirthDate = (date: string | null) => {
-    if (!date) return 'No disponible';
-    return new Date(date).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    if (!date) return "No disponible";
+    return new Date(date).toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -347,7 +379,7 @@ export default function SolicitudPage({ params }: PageParams) {
     notFound();
   }
 
-  const estatus = solicitud.estatus || 'pendiente';
+  const estatus = solicitud.estatus || "pendiente";
   const config = statusConfig[estatus];
   const StatusIcon = config.icon;
   const documentos = solicitud.perfiles.perfil_documentos || [];
@@ -371,7 +403,7 @@ export default function SolicitudPage({ params }: PageParams) {
               <StatusIcon className="h-3.5 w-3.5" />
               {config.label}
             </Badge>
-            {estatus !== 'pendiente' && (
+            {estatus !== "pendiente" && (
               <Button
                 variant="outline"
                 size="sm"
@@ -391,20 +423,38 @@ export default function SolicitudPage({ params }: PageParams) {
         {/* ===== INFORMACIÓN DE LA SOLICITUD ===== */}
         <Card className="border-white/10 bg-white/5 backdrop-blur-sm shadow-xl">
           <CardHeader>
-            <CardTitle className="text-base text-white">Información de la Solicitud</CardTitle>
+            <CardTitle className="text-base text-white">
+              Información de la Solicitud
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 sm:grid-cols-2">
-              <InfoRow icon={Hash} label="N° Solicitud" value={`#${solicitud.id}`} />
-              <InfoRow 
-                icon={StatusIcon} 
-                label="Estado" 
-                value={config.label}
-                valueClassName={config.className.split(' ')[1]}
+              <InfoRow
+                icon={Hash}
+                label="N° Solicitud"
+                value={`#${solicitud.id}`}
               />
-              <InfoRow icon={GraduationCap} label="Carrera" value={solicitud.carrera || 'No especificada'} />
-              <InfoRow icon={Calendar} label="Fecha Creación" value={formatDate(solicitud.fecha_creacion)} />
-              <InfoRow icon={CalendarDays} label="Última Actualización" value={formatDate(solicitud.fecha_actualizacion)} />
+              <InfoRow
+                icon={StatusIcon}
+                label="Estado"
+                value={config.label}
+                valueClassName={config.className.split(" ")[1]}
+              />
+              <InfoRow
+                icon={GraduationCap}
+                label="Carrera"
+                value={solicitud.carrera || "No especificada"}
+              />
+              <InfoRow
+                icon={Calendar}
+                label="Fecha Creación"
+                value={formatDate(solicitud.fecha_creacion)}
+              />
+              <InfoRow
+                icon={CalendarDays}
+                label="Última Actualización"
+                value={formatDate(solicitud.fecha_actualizacion)}
+              />
             </div>
           </CardContent>
         </Card>
@@ -419,31 +469,55 @@ export default function SolicitudPage({ params }: PageParams) {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <InfoRow 
-                icon={User} 
-                label="Nombre Completo" 
+              <InfoRow
+                icon={User}
+                label="Nombre Completo"
                 value={`${solicitud.perfiles.nombres} ${solicitud.perfiles.apellidos}`}
                 highlight
               />
-              <InfoRow icon={IdCard} label="Cédula" value={solicitud.perfiles.cedula} />
-              <InfoRow icon={Mail} label="Correo" value={solicitud.perfiles.correo} />
-              <InfoRow icon={Phone} label="Teléfono" value={solicitud.perfiles.telefono} />
-              <InfoRow icon={BookOpen} label="Carrera" value={solicitud.perfiles.carrera} />
-              <InfoRow icon={GraduationCap} label="Semestre" value={solicitud.perfiles.semestre || 'No especificado'} />
-              <InfoRow 
-                icon={Cake} 
-                label="Fecha Nacimiento" 
-                value={formatBirthDate(solicitud.perfiles.fecha_nacimiento)} 
+              <InfoRow
+                icon={IdCard}
+                label="Cédula"
+                value={solicitud.perfiles.cedula}
               />
-              <InfoRow 
-                icon={BadgeCheck} 
-                label="Género" 
-                value={generoLabels[solicitud.perfiles.genero || ''] || solicitud.perfiles.genero || 'No especificado'} 
+              <InfoRow
+                icon={Mail}
+                label="Correo"
+                value={solicitud.perfiles.correo}
               />
-              <InfoRow 
-                icon={Home} 
-                label="Dirección" 
-                value={solicitud.perfiles.direccion || 'No especificada'} 
+              <InfoRow
+                icon={Phone}
+                label="Teléfono"
+                value={solicitud.perfiles.telefono}
+              />
+              <InfoRow
+                icon={BookOpen}
+                label="Carrera"
+                value={solicitud.perfiles.carrera}
+              />
+              <InfoRow
+                icon={GraduationCap}
+                label="Semestre"
+                value={solicitud.perfiles.semestre || "No especificado"}
+              />
+              <InfoRow
+                icon={Cake}
+                label="Fecha Nacimiento"
+                value={formatBirthDate(solicitud.perfiles.fecha_nacimiento)}
+              />
+              <InfoRow
+                icon={BadgeCheck}
+                label="Género"
+                value={
+                  generoLabels[solicitud.perfiles.genero || ""] ||
+                  solicitud.perfiles.genero ||
+                  "No especificado"
+                }
+              />
+              <InfoRow
+                icon={Home}
+                label="Dirección"
+                value={solicitud.perfiles.direccion || "No especificada"}
               />
             </div>
           </CardContent>
@@ -457,7 +531,8 @@ export default function SolicitudPage({ params }: PageParams) {
               Documentos del Estudiante
             </CardTitle>
             <p className="text-sm text-white/60">
-              {documentos.length} documento{documentos.length !== 1 ? 's' : ''} cargado{documentos.length !== 1 ? 's' : ''}
+              {documentos.length} documento{documentos.length !== 1 ? "s" : ""}{" "}
+              cargado{documentos.length !== 1 ? "s" : ""}
             </p>
           </CardHeader>
           <CardContent>
@@ -478,18 +553,24 @@ export default function SolicitudPage({ params }: PageParams) {
                           </span>
                         </div>
                         <Badge className="border-white/20 bg-white/10 text-white/70 text-xs">
-                          {doc.mime_type.split('/')[1]?.toUpperCase()}
+                          {doc.mime_type?.includes("wordprocessingml.document")
+                            ? "DOCX"
+                            : doc.mime_type?.split("/")[1]?.toUpperCase()}
                         </Badge>
                       </div>
-                      
-                      <p className="text-xs text-white/50 mb-1 truncate" title={doc.nombre_archivo}>
+
+                      <p
+                        className="text-xs text-white/50 mb-1 truncate"
+                        title={doc.nombre_archivo}
+                      >
                         {doc.nombre_archivo}
                       </p>
-                      
+
                       <p className="text-xs text-white/40 mb-3">
-                        {formatFileSize(doc.tamano)} • {new Date(doc.creado_en).toLocaleDateString()}
+                        {formatFileSize(doc.tamano)} •{" "}
+                        {new Date(doc.creado_en).toLocaleDateString()}
                       </p>
-                      
+
                       <div className="flex gap-2">
                         <Button
                           size="sm"
@@ -538,14 +619,22 @@ export default function SolicitudPage({ params }: PageParams) {
                   Comentario actual:
                 </h4>
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                  <p className="text-sm text-white/80 whitespace-pre-wrap">{solicitud.comentarios}</p>
+                  <p className="text-sm text-white/80 whitespace-pre-wrap">
+                    {solicitud.comentarios}
+                  </p>
                 </div>
               </div>
             )}
 
-            <div className={solicitud.comentarios ? "border-t border-white/10 pt-4" : ""}>
+            <div
+              className={
+                solicitud.comentarios ? "border-t border-white/10 pt-4" : ""
+              }
+            >
               <h4 className="text-sm font-medium text-white/60 mb-2">
-                {solicitud.comentarios ? "Editar comentario:" : "Agregar comentario:"}
+                {solicitud.comentarios
+                  ? "Editar comentario:"
+                  : "Agregar comentario:"}
               </h4>
               <div className="space-y-3">
                 <Textarea
@@ -559,10 +648,14 @@ export default function SolicitudPage({ params }: PageParams) {
                 <div className="flex justify-end">
                   <Button
                     onClick={saveCommentOnly}
-                    disabled={!commentDraft.trim() || isSubmitting || commentDraft === solicitud.comentarios}
+                    disabled={
+                      !commentDraft.trim() ||
+                      isSubmitting ||
+                      commentDraft === solicitud.comentarios
+                    }
                     className="bg-blue-600/40 text-blue-200 hover:bg-blue-600/60 hover:text-white border border-blue-500/30 transition-all"
                   >
-                    {isSubmitting ? 'Guardando...' : 'Guardar Comentario'}
+                    {isSubmitting ? "Guardando..." : "Guardar Comentario"}
                   </Button>
                 </div>
               </div>
@@ -573,15 +666,18 @@ export default function SolicitudPage({ params }: PageParams) {
         {/* ===== CAMBIAR ESTADO ===== */}
         <Card className={`backdrop-blur-sm shadow-xl ${config.bgCard}`}>
           <CardHeader>
-            <CardTitle className="text-base text-white">Cambiar Estado de Admisión</CardTitle>
+            <CardTitle className="text-base text-white">
+              Cambiar Estado de Admisión
+            </CardTitle>
             <p className="text-sm text-white/60">
-              Estado actual: <span className="font-medium text-white">{config.label}</span>
+              Estado actual:{" "}
+              <span className="font-medium text-white">{config.label}</span>
             </p>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
             <Button
               onClick={() => setConfirm({ status: "pendiente" })}
-              disabled={isSubmitting || estatus === 'pendiente'}
+              disabled={isSubmitting || estatus === "pendiente"}
               className="bg-amber-600/40 text-amber-200 hover:bg-amber-600/60 hover:text-white border border-amber-500/30 transition-all"
             >
               <Clock className="mr-1.5 h-4 w-4" />
@@ -590,7 +686,7 @@ export default function SolicitudPage({ params }: PageParams) {
 
             <Button
               onClick={() => setConfirm({ status: "aprobado" })}
-              disabled={isSubmitting || estatus === 'aprobado'}
+              disabled={isSubmitting || estatus === "aprobado"}
               className="bg-emerald-600/40 text-emerald-200 hover:bg-emerald-600/60 hover:text-white border border-emerald-500/30 transition-all"
             >
               <CheckCircle2 className="mr-1.5 h-4 w-4" />
@@ -599,7 +695,7 @@ export default function SolicitudPage({ params }: PageParams) {
 
             <Button
               onClick={() => setConfirm({ status: "rechazado" })}
-              disabled={isSubmitting || estatus === 'rechazado'}
+              disabled={isSubmitting || estatus === "rechazado"}
               className="bg-red-600/40 text-red-200 hover:bg-red-600/60 hover:text-white border border-red-500/30 transition-all"
             >
               <XCircle className="mr-1.5 h-4 w-4" />
@@ -610,13 +706,17 @@ export default function SolicitudPage({ params }: PageParams) {
       </main>
 
       {/* ===== VISOR DE DOCUMENTOS ===== */}
-      <Dialog open={!!documentoPreview} onOpenChange={(open) => !open && setDocumentoPreview(null)}>
+      <Dialog
+        open={!!documentoPreview}
+        onOpenChange={(open) => !open && setDocumentoPreview(null)}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col bg-sky-950 border-white/20 text-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-white">
               {documentoPreview && (
                 <>
-                  {tipoDocumentoLabels[documentoPreview.tipo] || documentoPreview.tipo}
+                  {tipoDocumentoLabels[documentoPreview.tipo] ||
+                    documentoPreview.tipo}
                   <Badge className="border-white/20 bg-white/10 text-white/80">
                     {documentoPreview.nombre_archivo}
                   </Badge>
@@ -626,16 +726,17 @@ export default function SolicitudPage({ params }: PageParams) {
             <DialogDescription className="text-white/60">
               {documentoPreview && (
                 <span>
-                  {formatFileSize(documentoPreview.tamano)} • Subido el {new Date(documentoPreview.creado_en).toLocaleDateString()}
+                  {formatFileSize(documentoPreview.tamano)} • Subido el{" "}
+                  {new Date(documentoPreview.creado_en).toLocaleDateString()}
                 </span>
               )}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex-1 overflow-auto bg-black/20 rounded-lg">
             {documentoPreview && (
               <>
-                {documentoPreview.mime_type.startsWith('image/') ? (
+                {documentoPreview.mime_type.startsWith("image/") ? (
                   <div className="flex items-center justify-center p-4">
                     <img
                       src={`/api/auth/admin/documentos/${documentoPreview.id}`}
@@ -644,7 +745,7 @@ export default function SolicitudPage({ params }: PageParams) {
                       onError={() => toast.error("Error al cargar la imagen")}
                     />
                   </div>
-                ) : documentoPreview.mime_type === 'application/pdf' ? (
+                ) : documentoPreview.mime_type === "application/pdf" || "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
                   <div className="w-full h-full min-h-[65vh]">
                     <iframe
                       src={`/api/auth/admin/documentos/${documentoPreview.id}`}
@@ -660,7 +761,10 @@ export default function SolicitudPage({ params }: PageParams) {
                     </p>
                     <Button
                       className="mt-4 bg-emerald-600/40 text-emerald-200 hover:bg-emerald-600/60 hover:text-white border border-emerald-500/30 transition-all"
-                      onClick={() => documentoPreview && handleDownloadDocument(documentoPreview)}
+                      onClick={() =>
+                        documentoPreview &&
+                        handleDownloadDocument(documentoPreview)
+                      }
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Descargar archivo
@@ -670,9 +774,9 @@ export default function SolicitudPage({ params }: PageParams) {
               </>
             )}
           </div>
-          
+
           <DialogFooter>
-            <Button 
+            <Button
               variant="ghost"
               onClick={() => setDocumentoPreview(null)}
               className="text-white/60 hover:text-white hover:bg-white/10"
@@ -680,7 +784,7 @@ export default function SolicitudPage({ params }: PageParams) {
               Cerrar
             </Button>
             {documentoPreview && (
-              <Button 
+              <Button
                 onClick={() => handleDownloadDocument(documentoPreview)}
                 className="bg-emerald-600/40 text-emerald-200 hover:bg-emerald-600/60 hover:text-white border border-emerald-500/30 transition-all"
               >
@@ -700,16 +804,23 @@ export default function SolicitudPage({ params }: PageParams) {
               Confirmar: {confirm && statusConfig[confirm.status].label}
             </DialogTitle>
             <DialogDescription className="text-white/70">
-              {solicitud.perfiles.nombres} {solicitud.perfiles.apellidos} — N° Solicitud: {solicitud.id}
+              {solicitud.perfiles.nombres} {solicitud.perfiles.apellidos} — N°
+              Solicitud: {solicitud.id}
               <br />
               <span className="mt-2 block text-sm">
-                Estado actual: <span className="font-medium text-white">{config.label}</span>
+                Estado actual:{" "}
+                <span className="font-medium text-white">{config.label}</span>
                 <br />
-                Nuevo estado: <span className={`font-medium ${
-                  confirm?.status === 'aprobado' ? 'text-emerald-400' : 
-                  confirm?.status === 'rechazado' ? 'text-red-400' : 
-                  'text-amber-400'
-                }`}>
+                Nuevo estado:{" "}
+                <span
+                  className={`font-medium ${
+                    confirm?.status === "aprobado"
+                      ? "text-emerald-400"
+                      : confirm?.status === "rechazado"
+                        ? "text-red-400"
+                        : "text-amber-400"
+                  }`}
+                >
                   {confirm && statusConfig[confirm.status].label}
                 </span>
               </span>
@@ -727,9 +838,9 @@ export default function SolicitudPage({ params }: PageParams) {
             />
           </div>
           <DialogFooter>
-            <Button 
-              variant="ghost" 
-              onClick={() => setConfirm(null)} 
+            <Button
+              variant="ghost"
+              onClick={() => setConfirm(null)}
               disabled={isSubmitting}
               className="text-white/60 hover:text-white hover:bg-white/10"
             >
@@ -739,14 +850,14 @@ export default function SolicitudPage({ params }: PageParams) {
               onClick={() => confirm && updateStatus(confirm.status)}
               disabled={isSubmitting}
               className={
-                confirm?.status === "rechazado" 
-                  ? "bg-red-600/40 text-red-200 hover:bg-red-600/60 hover:text-white border border-red-500/30" 
-                  : confirm?.status === "aprobado" 
-                    ? "bg-emerald-600/40 text-emerald-200 hover:bg-emerald-600/60 hover:text-white border border-emerald-500/30" 
+                confirm?.status === "rechazado"
+                  ? "bg-red-600/40 text-red-200 hover:bg-red-600/60 hover:text-white border border-red-500/30"
+                  : confirm?.status === "aprobado"
+                    ? "bg-emerald-600/40 text-emerald-200 hover:bg-emerald-600/60 hover:text-white border border-emerald-500/30"
                     : "bg-amber-600/40 text-amber-200 hover:bg-amber-600/60 hover:text-white border border-amber-500/30"
               }
             >
-              {isSubmitting ? 'Procesando...' : 'Confirmar'}
+              {isSubmitting ? "Procesando..." : "Confirmar"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -772,15 +883,19 @@ function InfoRow({
   valueClassName?: string;
 }) {
   return (
-    <div className={`flex items-start gap-3 rounded-lg border p-3 transition-colors ${
-      highlight 
-        ? 'border-white/20 bg-white/10' 
-        : 'border-white/10 bg-white/5 hover:bg-white/10'
-    }`}>
+    <div
+      className={`flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+        highlight
+          ? "border-white/20 bg-white/10"
+          : "border-white/10 bg-white/5 hover:bg-white/10"
+      }`}
+    >
       <Icon className="mt-0.5 h-4 w-4 text-white/50 shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-white/50">{label}</p>
-        <p className={`truncate text-sm font-medium text-white ${valueClassName || ''}`}>
+        <p
+          className={`truncate text-sm font-medium text-white ${valueClassName || ""}`}
+        >
           {value}
         </p>
       </div>

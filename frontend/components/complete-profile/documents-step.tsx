@@ -2,7 +2,7 @@
 
 import { FileUploadField, type UploadFile } from "./file-upload-field"
 
-export type DocumentId = "fondoNegro" | "cedulaFile" | "notas" | "fotoCarnet" | "titulo"
+export type DocumentId = "fondoNegro" | "cedulaFile" | "notas" | "fotoCarnet" | "titulo" | "opsu" | "partidaNacimiento"
 
 export type DocumentsState = Partial<Record<DocumentId, UploadFile>>
 
@@ -46,6 +46,20 @@ export const DOCUMENT_FIELDS: {
     label: "Título",
     description: "Título de bachiller o profesional.",
     accept: ".png,.pdf",
+    acceptLabel: "PNG o PDF",
+  },
+  {
+    id: "partidaNacimiento",
+    label: "Partida de Nacimiento",
+    description: "Partida de nacimento de el estudiante.",
+    accept: ".png,.pdf",
+    acceptLabel: "PNG o PDF",
+  },
+  {
+    id: "opsu",
+    label: "Inscripción de la opsu",
+    description: "Entra a la página del SNI OPSU.",
+    accept: ".pdf, .docx",
     acceptLabel: "PNG o PDF",
   },
 ]

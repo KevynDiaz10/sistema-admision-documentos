@@ -175,7 +175,7 @@ export default function Page() {
       return;
     }
 
-    const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!tiposPermitidos.includes(archivo.type)) {
       toast.error('Solo se permiten archivos PDF, JPEG y PNG');
       setDocumentoAReemplazar(null);
@@ -252,7 +252,7 @@ export default function Page() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-900 to-blue-950 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-800 via-blue-900 to-blue-950 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="mx-auto h-12 w-12 animate-spin text-white/60" />
           <p className="mt-4 text-white/80">Cargando tus datos...</p>
@@ -263,7 +263,7 @@ export default function Page() {
 
   if (error || !datos) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-900 to-blue-950 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-blue-800 via-blue-900 to-blue-950 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-400" />
           <p className="mt-4 text-white/80">{error || 'Error al cargar los datos'}</p>
@@ -275,7 +275,7 @@ export default function Page() {
   const puedeModificar = canModifyDocument();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-800 via-blue-900 to-blue-950">
+    <div className="min-h-screen bg-linear-to-br from-blue-800 via-blue-900 to-blue-950">
       <Toaster position="top-right" richColors />
       
       <input
@@ -421,7 +421,7 @@ export default function Page() {
                           </span>
                         </div>
                         <Badge className="border-white/20 bg-white/10 text-white/70 text-xs">
-                          {doc.formato.split('/')[1]?.toUpperCase()}
+                          {doc.formato.toUpperCase().includes("WORDPROCESSINGML")? "DOCX" : doc.formato.split('/')[1]?.toUpperCase()}
                         </Badge>
                       </div>
                       
@@ -499,7 +499,7 @@ function InfoRow({
         ? 'border-white/20 bg-white/10' 
         : 'border-white/10 bg-white/5 hover:bg-white/10'
     }`}>
-      <Icon className="mt-0.5 h-4 w-4 text-white/50 flex-shrink-0" />
+      <Icon className="mt-0.5 h-4 w-4 text-white/50 shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-xs text-white/50">{label}</p>
         <p className="truncate text-sm font-medium text-white">{value}</p>

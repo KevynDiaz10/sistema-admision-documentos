@@ -7,6 +7,8 @@ const DOCUMENT_IDS = [
   "notas",
   "fotoCarnet",
   "titulo",
+  "partidaNacimiento",
+  "opsu"
 ] as const;
 
 const REQUIRED_FIELDS = [

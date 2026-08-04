@@ -146,7 +146,7 @@ export async function PUT(
     }
 
     // Validar tipo de archivo
-    const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
     if (!tiposPermitidos.includes(archivo.type)) {
       return NextResponse.json(
         { error: 'Tipo de archivo no permitido. Solo se permiten PDF, JPEG y PNG' },

@@ -91,7 +91,6 @@ export function FileUploadField({
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-3">
           <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
             {isImageFile && value.previewUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img src={value.previewUrl || "/placeholder.svg"} alt={label} className="size-full object-cover" />
             ) : (
               <FileText className="size-5 text-muted-foreground" />

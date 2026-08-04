@@ -23,7 +23,7 @@ function HeroSection() {
             el IUTA.
           </p>
           <div>
-            <Button className="" variant={"secondary"}>Sube tus documentos ahora</Button>
+            <a href="/auth/register"><Button className="" variant={"secondary"}>Sube tus documentos ahora </Button></a>
           </div>
         </div>
       </div>

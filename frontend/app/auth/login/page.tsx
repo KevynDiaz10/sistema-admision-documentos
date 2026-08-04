@@ -49,7 +49,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen grid grid-cols-2 justify-items-center items-center bg-sky-950">
+    <main className="min-h-screen grid grid-cols-2 justify-items-center items-center bg-linear-to-br from-blue-800 via-blue-900 to-blue-950">
       <div className="w-full items-center justify-center flex">
         <img
           src="/login-image.jpg"

@@ -29,26 +29,20 @@ function MenuNavigation() {
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <a
-                      className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-4 no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md md:p-6"
+                      className="from-muted/50 to-muted flex h-full w-full flex-col justify-center rounded-md bg-linear-to-b p-4 no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md "
                       href="/"
                     >
-                      <div className="mb-2 text-lg font-medium sm:mt-4">
-                        shadcn/ui
+                      <div className="mb-2 text-sm font-medium">
+                        El Instituto Universitario de Tecnología de Administración Industrial (IUTA) Ampliación Altos Mirandinos
                       </div>
-                      <p className="text-muted-foreground text-sm leading-tight">
-                        Beautifully designed components built with Tailwind CSS.
-                      </p>
                     </a>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/docs" title="Introduction">
-                  Re-usable components built using Radix UI and Tailwind CSS.
+                <ListItem href="/docs" title="Ubicación">
+                  Carretera Panamericana, kilómetro 25, sector El Cabotaje
                 </ListItem>
-                <ListItem href="/docs/installation" title="Installation">
-                  How to install dependencies and structure your app.
-                </ListItem>
-                <ListItem href="/docs/primitives/typography" title="Typography">
-                  Styles for headings, paragraphs, lists...etc
+                <ListItem href="/docs/installation" title="Horarios">
+                  Lunes a Viernes: 8:00 am - 6:00 pm | Sábados: 9:00 am - 1:00 pm
                 </ListItem>
               </ul>
             </NavigationMenuContent>
@@ -60,25 +54,25 @@ function MenuNavigation() {
                 <li>
                   <NavigationMenuLink asChild>
                     <Link href="#">
-                      <div className="font-medium">Components</div>
+                      <div className="font-medium">Correo electrónico</div>
                       <div className="text-muted-foreground">
-                        Browse all components in the library.
+                        altosmirandinos@iuta.edu.ve
                       </div>
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
                     <Link href="#">
-                      <div className="font-medium">Documentation</div>
+                      <div className="font-medium">Telefonos</div>
                       <div className="text-muted-foreground">
-                        Learn how to use the library.
+                        (0212) 323-59-66 / (0212) 323-60-94
                       </div>
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">
-                      <div className="font-medium">Blog</div>
+                    <Link href="https://www.instagram.com/iutaltos_oficial/">
+                      <div className="font-medium">Instagram</div>
                       <div className="text-muted-foreground">
-                        Read our latest blog posts.
+                        @iutaltos_oficial
                       </div>
                     </Link>
                   </NavigationMenuLink>

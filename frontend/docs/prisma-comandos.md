@@ -11,12 +11,15 @@ npx prisma generate
 # Crea y aplica una nueva migración según tus cambios en schema.prisma
 npx prisma migrate dev
 
+# Este comando eliminará la base de datos local previa, creará una nueva limpia basada exactamente en tu schema.prisma actual y creará un único folder de migración inicial en prisma/migrations/.
+npx prisma migrate dev --name init
+
 
 # ------------------------------------------------------------------
 # 2. DESPLIEGUE Y POBLADO DE DATOS
 # ------------------------------------------------------------------
 
-# Aplica migraciones pendientes en servidores o producción
+# Aplica migraciones pendientes en servidores o producción: Prisma va leyendo las carpetas en orden cronológico (de la más vieja a la más nueva) y ejecuta cada archivo SQL uno por uno. Al terminar, la base de datos queda exactamente igual a la tuya.
 npx prisma migrate deploy
 
 # Aplica cambios de schema a la DB sin crear archivos de migración
